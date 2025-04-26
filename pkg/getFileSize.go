@@ -18,6 +18,7 @@ func GetFileSize(url string) (int64, error) {
 		return 0, errors.New("服务器返回错误")
 	}
 	size, err := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 64)
+	fmt.Println(size)
 	if err != nil {
 		return 0, err
 	}
