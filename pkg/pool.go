@@ -24,11 +24,11 @@ type pool struct {
 	Tasks       common.Tasker
 }
 
-func (p *pool) Start(taskChan chan<- common.Tasks, resultChan <-chan common.Resluts, wg *sync.WaitGroup) {
+func (p *pool) Start(taskChan chan common.Tasks, resultChan chan common.Resluts, wg *sync.WaitGroup) {
 	// 启动工作者
 	for range p.ThreadCount {
 		wg.Add(1)
-		go p.Worker.Start()
+		go p.Worker.Start(taskChan, resultChan, wg)
 	}
 
 	// 构造任务，放入任务队列（通道）提供给工作者们

@@ -11,37 +11,31 @@ import (
 	"github.com/xinghe98/goDownloader/pkg"
 )
 
-func NewMp4Worker(part []*os.File, taskChan <-chan common.Tasks, resultChan chan<- common.Resluts, wg *sync.WaitGroup) *downloadMP4Worker {
+func NewMp4Worker(part []*os.File) *downloadMP4Worker {
 	return &downloadMP4Worker{
-		parts:      part,
-		taskChan:   taskChan,
-		resultChan: resultChan,
-		wg:         wg,
+		parts: part,
 	}
 }
 
 type downloadMP4Worker struct {
-	parts      []*os.File
-	taskChan   <-chan common.Tasks
-	resultChan chan<- common.Resluts
-	wg         *sync.WaitGroup
+	parts []*os.File
 }
 
-func (downloadMP4 *downloadMP4Worker) Start() {
+func (downloadMP4 *downloadMP4Worker) Start(taskChan <-chan common.Tasks, resultChan chan<- common.Resluts, wg *sync.WaitGroup) {
 	client := pkg.GetClient()
-	defer downloadMP4.wg.Done()
-	for task := range downloadMP4.taskChan {
+	defer wg.Done()
+	for task := range taskChan {
 		result := common.Resluts{}
 		resp, err := client.Do(task.Req)
 		if err != nil {
 			result.Err = err
-			downloadMP4.resultChan <- result
+			resultChan <- result
 			continue
 		}
 
 		if resp.StatusCode != http.StatusPartialContent {
 			result.Err = fmt.Errorf("服务器不支持分段下载，返回状态: %s", resp.Status)
-			downloadMP4.resultChan <- result
+			resultChan <- result
 			resp.Body.Close()
 			continue
 		}
@@ -58,7 +52,7 @@ func (downloadMP4 *downloadMP4Worker) Start() {
 		}()
 		result.Err = nil
 		result.Success = true
-		downloadMP4.resultChan <- result
+		resultChan <- result
 		task.Bar.Increment()
 	}
 }

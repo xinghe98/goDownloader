@@ -29,7 +29,7 @@ func main() {
 	resultChan := make(chan common.Resluts, threads)
 
 	// 初始化工作者
-	worker := downloadmp4.NewMp4Worker(parts, taskChan, resultChan, &wg)
+	worker := downloadmp4.NewMp4Worker(parts)
 	// 初始化任务队列
 	tasker := downloadmp4.NewMp4Tasks(url, outputFile, parts, p)
 	// 初始化工作池

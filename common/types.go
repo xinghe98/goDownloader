@@ -9,7 +9,7 @@ import (
 
 // worker接口
 type Worker interface {
-	Start()
+	Start(taskChan <-chan Tasks, resultChan chan<- Resluts, wg *sync.WaitGroup)
 }
 
 type Tasker interface {
