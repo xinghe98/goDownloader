@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"runtime"
@@ -11,13 +12,19 @@ import (
 	"github.com/xinghe98/goDownloader/common"
 	"github.com/xinghe98/goDownloader/downloadmp4"
 	"github.com/xinghe98/goDownloader/pkg"
+	"github.com/xinghe98/goDownloader/pkg/flags"
 )
 
 func main() {
-	// INFO: 先全局定义一些内容
-	url := "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_30mb.mp4"
+	// url := "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_30mb.mp4"
+	// outputFile := "video.mp4"
+
+	url := flag.String("url", "", "video url (required)")
+	outputFile := flag.String("name", "video.mp4", "输出文件名")
+	flag.Parse()
+	flags.CheckRequired()
+
 	start := time.Now()
-	outputFile := "video.mp4"
 	threads := runtime.NumCPU()
 	parts := make([]*os.File, threads)
 	var wg sync.WaitGroup
@@ -31,7 +38,7 @@ func main() {
 	// 初始化工作者
 	worker := downloadmp4.NewMp4Worker(parts)
 	// 初始化任务队列
-	tasker := downloadmp4.NewMp4Tasks(url, outputFile, parts, p)
+	tasker := downloadmp4.NewMp4Tasks(*url, *outputFile, parts, p)
 	// 初始化工作池
 	pool := pkg.NewPool(worker, tasker)
 	// 启动工作池
@@ -52,6 +59,5 @@ func main() {
 			return
 		}
 	}
-
-	pkg.MergeParts(outputFile, parts)
+	pkg.MergeParts(*outputFile, parts)
 }
