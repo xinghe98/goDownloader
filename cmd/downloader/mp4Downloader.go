@@ -1,4 +1,4 @@
-package main
+package downloader
 
 import (
 	"fmt"
@@ -13,8 +13,12 @@ import (
 	"github.com/xinghe98/goDownloader/pkg"
 )
 
-// FIX:
-func Mp4Downloader(url string, outputFile string) {
+type Mp4Downloader struct {
+	url        string
+	outputFlie string
+}
+
+func (Mp4 *Mp4Downloader) Download() {
 	start := time.Now()
 	threads := runtime.NumCPU()
 	parts := make([]*os.File, threads)
@@ -29,7 +33,7 @@ func Mp4Downloader(url string, outputFile string) {
 	// 初始化工作者
 	worker := downloadmp4.NewMp4Worker(parts)
 	// 初始化任务队列
-	tasker := downloadmp4.NewMp4Tasks(url, outputFile, parts, p)
+	tasker := downloadmp4.NewMp4Tasks(Mp4.url, Mp4.outputFlie, parts, p)
 	// 初始化工作池
 	pool := pkg.NewPool(worker, tasker)
 	// 启动工作池
@@ -50,5 +54,5 @@ func Mp4Downloader(url string, outputFile string) {
 			return
 		}
 	}
-	pkg.MergeParts(outputFile, parts)
+	pkg.MergeParts(Mp4.outputFlie, parts)
 }

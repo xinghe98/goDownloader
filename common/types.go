@@ -7,6 +7,16 @@ import (
 	"github.com/vbauerster/mpb"
 )
 
+// 下载器接口
+type DownLoader interface {
+	Download()
+}
+
+// pool接口
+type Pool interface {
+	Start(taskChan chan Tasks, resultChan chan Resluts, wg *sync.WaitGroup)
+}
+
 // worker接口
 type Worker interface {
 	Start(taskChan <-chan Tasks, resultChan chan<- Resluts, wg *sync.WaitGroup)
@@ -15,11 +25,6 @@ type Worker interface {
 // Tasker接口
 type Tasker interface {
 	EnterQueue(taskChan chan<- Tasks)
-}
-
-// pool接口
-type Pool interface {
-	Start(taskChan chan<- Tasks, resultChan <-chan Resluts, wg *sync.WaitGroup)
 }
 
 // 任务队列
