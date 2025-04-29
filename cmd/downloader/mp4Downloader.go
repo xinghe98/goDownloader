@@ -14,8 +14,8 @@ import (
 )
 
 type Mp4Downloader struct {
-	url        string
-	outputFlie string
+	Url        string
+	OutputFlie string
 }
 
 func (Mp4 *Mp4Downloader) Download() {
@@ -33,7 +33,7 @@ func (Mp4 *Mp4Downloader) Download() {
 	// 初始化工作者
 	worker := downloadmp4.NewMp4Worker(parts)
 	// 初始化任务队列
-	tasker := downloadmp4.NewMp4Tasks(Mp4.url, Mp4.outputFlie, parts, p)
+	tasker := downloadmp4.NewMp4Tasks(Mp4.Url, Mp4.OutputFlie, parts, p)
 	// 初始化工作池
 	pool := pkg.NewPool(worker, tasker)
 	// 启动工作池
@@ -54,5 +54,5 @@ func (Mp4 *Mp4Downloader) Download() {
 			return
 		}
 	}
-	pkg.MergeParts(Mp4.outputFlie, parts)
+	pkg.MergeParts(Mp4.OutputFlie, parts)
 }

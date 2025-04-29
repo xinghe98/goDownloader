@@ -2,9 +2,22 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/jessevdk/go-flags"
+	"github.com/xinghe98/goDownloader/cmd/downloader"
+	"github.com/xinghe98/goDownloader/common"
 )
+
+func newDownloader(url string, outputName string) common.DownLoader {
+	if strings.HasSuffix(url, "m3u8") {
+		panic("no function")
+	}
+	return &downloader.Mp4Downloader{
+		Url:        url,
+		OutputFlie: outputName,
+	}
+}
 
 type Options struct {
 	Url    string `short:"u" long:"url" description:"下载链接的URL" required:"true"`
@@ -24,5 +37,6 @@ func main() {
 		}
 		return
 	}
-	// FIX:
+	downloader := newDownloader(opts.Url, opts.Output)
+	downloader.Download()
 }
