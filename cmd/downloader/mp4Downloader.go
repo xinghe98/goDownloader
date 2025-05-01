@@ -24,7 +24,7 @@ func (Mp4 *Mp4Downloader) Download() {
 	parts := make([]*os.File, threads)
 	var wg sync.WaitGroup
 	// 创建进度条容器
-	p := mpb.New()
+	tqdm := mpb.New()
 
 	// 初始化通道
 	taskChan := make(chan common.Tasks, threads)
@@ -33,7 +33,7 @@ func (Mp4 *Mp4Downloader) Download() {
 	// 初始化工作者
 	worker := downloadmp4.NewMp4Worker(parts)
 	// 初始化任务队列
-	tasker := downloadmp4.NewMp4Tasks(Mp4.Url, Mp4.OutputFlie, parts, p)
+	tasker := downloadmp4.NewMp4Tasks(Mp4.Url, Mp4.OutputFlie, parts, tqdm)
 	// 初始化工作池
 	pool := pkg.NewPool(worker, tasker)
 	// 启动工作池
@@ -41,7 +41,7 @@ func (Mp4 *Mp4Downloader) Download() {
 
 	go func() {
 		wg.Wait()
-		p.Wait()
+		tqdm.Wait()
 		close(resultChan)
 		cost := time.Since(start)
 		fmt.Printf("总耗时：[%s]\n", cost)

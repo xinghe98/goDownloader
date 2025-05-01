@@ -19,7 +19,7 @@ type Pool interface {
 
 // worker接口
 type Worker interface {
-	Start(taskChan <-chan Tasks, resultChan chan<- Resluts, wg *sync.WaitGroup)
+	Start(taskChan <-chan Tasks, resultChan chan<- Resluts)
 }
 
 // Tasker接口

@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"sync"
 
 	"github.com/xinghe98/goDownloader/common"
 	"github.com/xinghe98/goDownloader/pkg"
@@ -21,9 +20,8 @@ type downloadMP4Worker struct {
 	parts []*os.File
 }
 
-func (downloadMP4 *downloadMP4Worker) Start(taskChan <-chan common.Tasks, resultChan chan<- common.Resluts, wg *sync.WaitGroup) {
+func (downloadMP4 *downloadMP4Worker) Start(taskChan <-chan common.Tasks, resultChan chan<- common.Resluts) {
 	client := pkg.GetClient()
-	defer wg.Done()
 	for task := range taskChan {
 		result := common.Resluts{}
 		resp, err := client.Do(task.Req)
