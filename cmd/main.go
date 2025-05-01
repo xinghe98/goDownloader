@@ -9,7 +9,7 @@ import (
 	"github.com/xinghe98/goDownloader/common"
 )
 
-func newDownloader(url string, outputName string) common.DownLoader {
+func NewDownloader(url string, outputName string) common.DownLoader {
 	if strings.HasSuffix(url, "m3u8") {
 		panic("no function")
 	}
@@ -37,6 +37,6 @@ func main() {
 		}
 		return
 	}
-	downloader := newDownloader(opts.Url, opts.Output)
+	downloader := NewDownloader(opts.Url, opts.Output)
 	downloader.Download()
 }
